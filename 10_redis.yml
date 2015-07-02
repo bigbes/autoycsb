@@ -1,0 +1,19 @@
+---
+- hosts: dbservers
+  tasks:
+  - name:  check for sudo
+    shell: echo "I'm sudoer"
+    sudo:  true
+  - name:  copy redis config
+    template: src={{ redis.name }}.lua
+              dest=/etc/redis/redis_{{ redis.port }}
+              owner=root
+              group=root
+  - name:  copy redis init
+    template: src=redis.init.j2
+              dest=/etc/init.d/redis_{{ redis.port }}
+              owner=root
+              group=root
+  - name:  start redis
+    service: name=redis_{{ redis.port }} state=started
+...

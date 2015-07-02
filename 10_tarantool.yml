@@ -1,0 +1,20 @@
+---
+- hosts: dbservers
+  tasks:
+  - name:  check for sudo
+    shell: echo "I'm sudoer"
+    sudo:  true
+  - name: copy tnt config
+    template: src={{ tarantool.name }}.lua
+              dest=/etc/tarantool/instances.enabled/{{ tarantool.name }}-ycsb.lua
+              owner=root
+              group=root
+  - name: stop tarantool
+    command: tarantoolctl stop {{ tarantool.name }}-ycsb
+  - name: clean data
+    command: rm -rf /var/lib/tarantool/{{ tarantool.name }}-ycsb
+  - name: clean data
+    command: rm /var/log/tarantool/{{ tarantool.name }}-ycsb.log
+  - name: start tarantool
+    command: tarantoolctl start {{ tarantool.name }}-ycsb
+...

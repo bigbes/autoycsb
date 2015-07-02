@@ -1,0 +1,65 @@
+---
+runs:
+#    threads: [8, 16, 32, 64, 128, 256]
+    threads: [1]
+    retries: 5
+databases:
+    - name: 'redis'
+      port: 6379
+    - name: 'tarantool'
+      port: 3301
+      arena: 8
+      index: 'tree'
+    - name: 'tarantool'
+      port: 3301
+      arena: 8
+      index: 'hash'
+ycsb_parameters:
+    recordcount:            2000000
+    operationcount:         5000000
+    exportfile:             'ycsb_export.json'
+    exporter: 'com.yahoo.ycsb.measurements.exporter.JSONMeasurementsExporter'
+    measurementtype:        'timeseries'
+    timeseries.granularity: 2000
+workloads:
+    -   internal:    'load_only'
+        wl:          'workloada'
+        type:        'load'
+        description: 'Insert only'
+        short_name:  'LOAD'
+    -   internal:    'workloada'
+        workload:    'workloada'
+        type:        'run'
+        description: 'Workload A'
+        short_name:  'A'
+    -   internal:    'workloadb'
+        workload:    'workloadb'
+        type:        'run'
+        description: 'Workload B'
+        short_name:  'B'
+    -   internal:    'workloadc'
+        workload:    'workloadc'
+        type:        'run'
+        description: 'Workload C'
+        short_name:  'C'
+    -   internal:    'workloadd'
+        workload:    'workloadd'
+        type:        'run'
+        description: 'Workload D'
+        short_name:  'D'
+    -   internal:    'workloade'
+        workload:    'workloade'
+        type:        'run'
+        description: 'Workload E'
+        short_name:  'E'
+        ycsb_parameters:
+            operationcount: 200000
+    -   internal:    'workloadf'
+        workload:    'workloadf'
+        type:        'run'
+        description: 'Workload F'
+        short_name:  'F'
+ansible:
+    timeout: 60
+    output:  'output'
+...
