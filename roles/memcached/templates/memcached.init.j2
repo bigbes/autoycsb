@@ -1,0 +1,65 @@
+### BEGIN INIT INFO
+# Provides:            memcached
+# Required-Start:      $remote_fs $syslog
+# Required-Stop:       $remote_fs $syslog
+# Should-Start:        $local_fs
+# Should-Stop:         $local_fs
+# Default-Start:       2 3 4 5
+# Default-Stop:        0 1 6
+# Short-Description:   Start memcached daemon
+# Description:         Start up memcached, a high-performance memory caching daemon
+### END INIT INFO
+
+NAME={{ name }}_{{ port }}
+
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+DAEMON=/usr/bin/memcached
+DAEMON_ARGS=/etc/memcached/$NAME.conf
+PIDFILE=/var/run/memcached/$NAME.pid
+
+DAEMONBOOTSTRAP=/usr/share/memcached/scripts/start-memcached
+
+test -x $DAEMON || exit 0
+test -x $DAEMONBOOTSTRAP || exit 0
+
+set -e
+
+. /lib/lsb/init-functions
+
+case "$1" in
+  start)
+        echo -n "Starting $NAME: "
+        if start-stop-daemon --start --quiet --exec "$DAEMONBOOTSTRAP" -- $DAEMON_ARGS $PIDFILE
+        then
+            echo "ok"
+        else
+            echo "fail"
+        fi
+        ;;
+  stop)
+        echo -n "Stopping $NAME: "
+        if start-stop-daemon --stop --quiet --oknodo --retry 5 --pidfile $PIDFILE --exec $DAEMON
+        then
+            echo "ok"
+        else
+            echo "fail"
+        fi
+        rm -f $PIDFILE
+        ;;
+
+  restart|force-reload)
+        ${0} stop
+        ${0} start
+        ;;
+  status)
+        status_of_proc -p $PIDFILE $DAEMON $NAME  && exit 0 || exit $?
+        ;;
+  *)
+        N=/etc/init.d/$NAME
+        echo "Usage: $N {start|stop|restart|force-reload|status}" >&2
+        exit 1
+        ;;
+esac
+
+exit 0
+

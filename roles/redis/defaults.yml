@@ -1,0 +1,7 @@
+---
+name:       'redis'
+port:       6379
+custom:     'logging'
+output:     '/tmp'
+outlog:     '{{ inventory_hostname }}-{{ name }}-{{ custom }}.log'
+...

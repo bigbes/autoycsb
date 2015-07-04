@@ -1,0 +1,8 @@
+---
+name:       'tarantool'
+port:       3301
+arena:      0.1
+index:      'tree'
+output:     '/tmp'
+outlog:     '{{ inventory_hostname }}-{{ name }}.log'
+...

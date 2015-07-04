@@ -1,5 +1,6 @@
 [dbservers]
-localhost:
+vagrant@localhost:2222 ansible_ssh_private_key_file=/home/bigbes/.vagrant.d/insecure_private_key
 
 [ycsbservers]
-localhost
+vagrant@localhost1:2222 ansible_ssh_private_key_file=/home/bigbes/.vagrant.d/insecure_private_key
+vagrant@localhost2:2200 ansible_ssh_private_key_file=/home/bigbes/.vagrant.d/insecure_private_key

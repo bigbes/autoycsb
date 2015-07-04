@@ -1,7 +1,10 @@
 daemonize yes
-pidfile /var/run/redis/redis_{{ redis.port }}.pid
-logfile /var/log/redis/redis_{{ redis.port }}.log
-port {{ redis.port }}
+
+pidfile /var/run/redis/{{ name }}_{{ port }}.pid
+logfile /var/log/redis/{{ name }}_{{ port }}.log
+dir     /var/lib/redis/{{ name }}_{{ port }}/
+
+port {{ port }}
 timeout 0
 loglevel warning
 databases 1

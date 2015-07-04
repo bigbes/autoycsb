@@ -1,0 +1,5 @@
+---
+- name: clean data
+  command: "rm -f /var/log/memcached/{{ name }}_{{ port }}.log"
+  sudo: true
+...

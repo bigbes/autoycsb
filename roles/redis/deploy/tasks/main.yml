@@ -1,0 +1,20 @@
+---
+- name: copy redis config/init
+  template: "src={{ item.src }}
+             dest={{ item.dest }}
+             mode=755
+             owner=root
+             group=root"
+  with_items:
+    - src: "{{ name }}.conf.j2"
+      dest: "/etc/redis/{{ name }}_{{ port }}.conf"
+    - src: "{{ name }}.init.j2"
+      dest: "/etc/init.d/{{ name }}_{{ port }}"
+  sudo: True
+- name: create directories
+  shell: mkdir -p {{ item }}
+  with_items:
+    - "/var/run/redis"
+    - "/var/lib/redis/{{ name }}_{{ port }}"
+  sudo: True
+...

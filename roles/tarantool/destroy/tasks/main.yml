@@ -1,0 +1,5 @@
+---
+- name: clean tarantool
+  command: rm -f /etc/tarantool/instances.enabled/{{ name }}-ycsb.lua
+  sudo: true
+...

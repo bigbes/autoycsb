@@ -1,0 +1,21 @@
+---
+- shell: "{{ ycsb_bin_path }} {{ wl_type }} {{ db_name }} -P {{ wl_name }} -s
+          -threads {{ threads }} {{ wl_props }} -p exportfile={{ outfile }}.output
+          > {{ outname }}.stdout 2> {{ errname }}.stderr chdir={{ ycsb_path }}"
+  async: 10000
+  poll:  5
+- fetch: 'src={{ ycsb_path }}/{{ outname }}.stdout dest={{ output }}/{{ inventory_hostname }}-{{ attempt }}.stdout
+          flat=True fail_on_missing=Yes'
+  when: not skip_copy
+- fetch: 'src={{ ycsb_path }}/{{ errname }}.stderr dest={{ output }}/{{ inventory_hostname }}-{{ attempt }}.stderr
+          flat=True fail_on_missing=Yes'
+  when: not skip_copy
+- fetch: 'src={{ ycsb_path }}/{{ outfile }}.output dest={{ output }}/{{ inventory_hostname }}-{{ attempt }}.output
+          flat=True fail_on_missing=Yes'
+  when: not skip_copy
+- command: rm -rf {{ item }}
+  with_items:
+    - '{{ ycsb_path }}/{{ outname }}.stdout'
+    - '{{ ycsb_path }}/{{ errname }}.stderr'
+    - '{{ ycsb_path }}/{{ outfile }}.output'
+...

@@ -1,0 +1,12 @@
+box.cfg {
+   custom_proc_title = '{{ name }}-ycsb',
+   listen            = '{{ port }}',
+   slab_alloc_arena  = {{ arena }},
+   log_level         = 5,
+   logger_nonblock   = true,
+   wal_mode          = "none",
+}
+
+local spc = box.schema.space.create("ycsb", { id = 1024 })
+spc:create_index('primary', { type = {{ index }}, parts = {1, 'STR'} } )
+box.schema.user.grant('guest', 'read,write,execute', 'universe')

@@ -1,0 +1,26 @@
+---
+prepare: False
+run: False
+version: '0.2.0-RC3'
+download_path: 'https://github.com/brianfrankcooper/YCSB/archive/{{ version }}.tar.gz'
+destination: '/tmp'
+ycsb_path: '{{ destination }}/ycsb-{{ version }}'
+ycsb_bin_path: '{{ ycsb_path }}/bin/ycsb'
+wl_internal: 'A'
+wl_type: 'load'
+db_name: 'redis'
+db_surname: '{{ db_name }}'
+wl_name: 'workloads/workloada'
+#wl_props: '-p tarantool.host=192.168.33.11 -p tarantool.port=3301'
+wl_props: '-p redis.host=192.168.33.11 -p redis.port=6379'
+threads: 1
+attempt: 1
+output:  '{{ destination }}'
+#outfile: '{{ wl_internal }}-{{ db_surname }}-{{ threads }}-{{ attempt }}'
+#outname: '{{ wl_internal }}-{{ db_surname }}-{{ threads }}-{{ attempt }}'
+#errname: '{{ wl_internal }}-{{ db_surname }}-{{ threads }}-{{ attempt }}'
+outfile: '{{ wl_internal }}-{{ attempt }}'
+outname: '{{ wl_internal }}-{{ attempt }}'
+errname: '{{ wl_internal }}-{{ attempt }}'
+skip_copy: False
+...

@@ -1,0 +1,12 @@
+---
+- name: install packages
+  apt:  name=memcached
+- name: create directories
+  shell: mkdir -p {{ item }}
+  with_items:
+    - /etc/memcached
+    - /var/log/memcached
+    - /var/run/memcached
+- name: stop DB
+  service: name=memcached state=stopped
+...

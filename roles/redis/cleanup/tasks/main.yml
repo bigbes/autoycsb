@@ -1,0 +1,8 @@
+---
+- name: cleanup
+  shell: rm -rf {{ item }}
+  with_items:
+    - '/var/log/redis/{{ name }}_{{ port }}.log'
+    - '/var/lib/redis/{{ name }}_{{ port }}/*'
+  sudo: true
+...

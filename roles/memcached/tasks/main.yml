@@ -1,0 +1,14 @@
+---
+- include: prepare.yml
+  when: prepare|bool == True
+- include: deploy.yml
+  when: deploy|bool == True
+- include: start.yml
+  when: start|bool == True
+- include: stop.yml
+  when: stop|bool == True
+- include: cleanup.yml
+  when: cleanup|bool == True
+- include: destroy.yml
+  when: destroy|bool == True
+...

@@ -10,7 +10,7 @@
 # Description:          redis-server - Persistent key-value db
 ### END INIT INFO
 
-NAME=redis_{{ redis.port }}
+NAME={{ name }}_{{ port }}
 
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 DAEMON=/usr/bin/redis-server
@@ -22,6 +22,8 @@ test -x $DAEMONBOOTSTRAP || exit 0
 
 set -e
 
+. /lib/lsb/init-functions
+
 case "$1" in
   start)
         echo -n "Starting $NAME: "
@@ -29,7 +31,7 @@ case "$1" in
         chown redis:redis $PIDFILE
         if start-stop-daemon --start --quiet --umask 007 --pidfile $PIDFILE --chuid redis:redis --exec $DAEMON -- $DAEMON_ARGS
         then
-                echo "$NAME."
+                echo "ok"
         else
                 echo "failed"
         fi
@@ -38,7 +40,7 @@ case "$1" in
         echo -n "Stopping $NAME: "
         if start-stop-daemon --stop --retry 10 --quiet --oknodo --pidfile $PIDFILE --exec $DAEMON
         then
-                echo "$NAME."
+                echo "ok"
         else
                 echo "failed"
         fi
@@ -49,8 +51,12 @@ case "$1" in
         ${0} stop
         ${0} start
         ;;
+  status)
+        status_of_proc -p $PIDFILE $DAEMON $NAME  && exit 0 || exit $?
+        ;;
   *)
-        echo "Usage: /etc/init.d/$NAME {start|stop|restart|force-reload}" >&2
+        N=/etc/init.d/$NAME
+        echo "Usage: $N {start|stop|restart|force-reload|status}" >&2
         exit 1
         ;;
 esac

@@ -1,0 +1,5 @@
+---
+- name: Start Redis
+  service: "name={{ name }}_{{ port }} state=started"
+  sudo: True
+...

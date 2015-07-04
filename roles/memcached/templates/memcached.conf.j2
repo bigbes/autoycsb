@@ -1,0 +1,6 @@
+-d
+logfile /var/log/memcached/{{ name }}_{{ port }}.log
+-m 64
+-p {{ port }}
+-u memcache
+-P /var/run/memcached/{{ name }}_{{ port }}.pid

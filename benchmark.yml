@@ -1,65 +1,87 @@
 ---
 runs:
 #    threads: [8, 16, 32, 64, 128, 256]
-    threads: [1]
-    retries: 5
+  threads: [32]
+  retries: 1
 databases:
+  list:
     - name: 'redis'
-      port: 6379
-    - name: 'tarantool'
-      port: 3301
-      arena: 8
-      index: 'tree'
-    - name: 'tarantool'
-      port: 3301
-      arena: 8
-      index: 'hash'
-ycsb_parameters:
-    recordcount:            2000000
-    operationcount:         5000000
-    exportfile:             'ycsb_export.json'
-    exporter: 'com.yahoo.ycsb.measurements.exporter.JSONMeasurementsExporter'
-    measurementtype:        'timeseries'
-    timeseries.granularity: 2000
+      opts:
+        port: 6379
+    - name: 'tarantool-tree'
+      opts:
+        port: 3301
+        arena: 0.5
+        index: 'tree'
+    - name: 'tarantool-hash'
+      opts:
+        port: 3301
+        arena: 0.5
+        index: 'hash'
+  host:
+    host: '192.168.33.10'
+    user: 'vagrant'
+    opts:
+      ansible_ssh_private_key_file: '/home/bigbes/.vagrant.d/insecure_private_key'
+#      ansible_sudo_pass: ''
 workloads:
-    -   internal:    'load_only'
-        wl:          'workloada'
-        type:        'load'
-        description: 'Insert only'
-        short_name:  'LOAD'
-    -   internal:    'workloada'
-        workload:    'workloada'
-        type:        'run'
-        description: 'Workload A'
-        short_name:  'A'
-    -   internal:    'workloadb'
-        workload:    'workloadb'
-        type:        'run'
-        description: 'Workload B'
-        short_name:  'B'
-    -   internal:    'workloadc'
-        workload:    'workloadc'
-        type:        'run'
-        description: 'Workload C'
-        short_name:  'C'
-    -   internal:    'workloadd'
-        workload:    'workloadd'
-        type:        'run'
-        description: 'Workload D'
-        short_name:  'D'
-    -   internal:    'workloade'
-        workload:    'workloade'
-        type:        'run'
-        description: 'Workload E'
-        short_name:  'E'
-        ycsb_parameters:
-            operationcount: 200000
-    -   internal:    'workloadf'
-        workload:    'workloadf'
-        type:        'run'
-        description: 'Workload F'
-        short_name:  'F'
+  params:
+    recordcount:            2000
+    operationcount:         5000
+    exporter:              'com.yahoo.ycsb.measurements.exporter.JSONArrayMeasurementsExporter'
+    measurementtype:       'timeseries'
+    timeseries.granularity: 2000
+  list:
+    'A': {
+      workloadfile: 'workloads/workloada',
+      description:  'Workload A'
+    }
+    'B': {
+      workloadfile: 'workloads/workloadb',
+      description: 'Workload B'
+    }
+#     'C': {
+#       workloadfile: 'workloads/workloadc',
+#       description: 'Workload C'
+#     }
+#     'D': {
+#       workloadfile: 'workloads/workloada',
+#       description: 'Workload D'
+#     }
+#     'E': {
+#       workloadfile: 'workloads/workloade',
+#       description: 'Workload E',
+#       params: {
+#         operationcount: 200000
+#       }
+#     }
+#     'F': {
+#       workloadfile: 'workloads/workloadf',
+#       description: 'Workload F'
+#     }
+#     'LOAD': {
+#       workloadfile: 'workloads/workloada',
+#       description: 'Insert Only',
+#       params: {
+#         insertproportion: 1,
+#         updateproportion: 0,
+#         readproportion: 0,
+#         scanproportion: 0
+#       }
+#     }
+  hosts:
+    - host: '192.168.33.11'
+      user: 'vagrant'
+      opts:
+        ansible_ssh_private_key_file: '/home/bigbes/.vagrant.d/insecure_private_key'
+#        ansible_sudo_pass: ''
+    - host: '192.168.33.12'
+      user: 'vagrant'
+      opts:
+        ansible_ssh_private_key_file: '/home/bigbes/.vagrant.d/insecure_private_key'
+#        ansible_sudo_pass: ''
 ansible:
-    timeout: 60
-    output:  'output'
+  timeout:  60
+  output:  './output/'
+export: 'lol:lol'
 ...

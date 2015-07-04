@@ -1,0 +1,5 @@
+---
+- name: stop/start memcached
+  service: "name={{ name }}_{{ port }} state=started"
+  sudo: True
+...

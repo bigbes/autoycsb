@@ -1,0 +1,8 @@
+---
+- name: remove config and init
+  shell: rm -f {{ item }}
+  with_items:
+    - "/etc/init.d/{{ name }}_{{ port }}"
+    - "/etc/redis/{{ name }}_{{ port }}"
+  sudo: True
+...

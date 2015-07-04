@@ -1,22 +1,13 @@
 ---
 - hosts: dbservers
-  tasks:
-  - name:  check for sudo
-    shell: echo "I'm sudoer"
-    sudo:  true
-  - name:  add repositories
-    apt_repository: repo={{ item }} state=present
-    with_items:
-      - 'ppa:chris-lea/redis-server'
-      - 'deb http://tarantool.org/dist/master/ubuntu/ trusty main'
-  - name:  add tarantool repo key
-    apt_key: url='http://tarantool.org/dist/public.key' state=present
-  - name: update
-    apt:  update_cache=yes
-  - name: install packages
-    apt:  name={{ item }}
-    with_items:
-      - redis
-      - memcached
-      - tarantool
+  gather_facts: no
+  sudo: True
+  roles:
+    - tarantool/prepare
+    - redis/prepare
+    - { role: memcached,         prepare: True}
+- hosts: ycsbservers
+  gather_facts: no
+  roles:
+    - ycsb/prepare
 ...

@@ -1,0 +1,8 @@
+---
+- name: clean data
+  command: rm -r {{ item }}
+  sudo: true
+  with_items:
+    - /var/lib/tarantool/{{ name }}-ycsb/*
+    - /var/log/tarantool/{{ name }}-ycsb.log
+...

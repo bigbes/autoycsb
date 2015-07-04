@@ -1,0 +1,6 @@
+---
+- hosts: ycsbservers
+  gather_facts: yes
+  roles:
+    - ycsb/run
+...

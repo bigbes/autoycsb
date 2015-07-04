@@ -1,0 +1,10 @@
+---
+name:    'memcached'
+port:    11211
+deploy:  False
+start:   False
+stop:    False
+cleanup: False
+destroy: False
+prepare: False
+...
