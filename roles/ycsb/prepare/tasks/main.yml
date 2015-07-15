@@ -1,33 +1,35 @@
 ---
-- stat: path={{ ycsb_path }}
-  register: st
-- name: install Java deps
-  apt: name={{ item }}
-  sudo: True
-  async: 5000
-  poll:  5
-  with_items:
-    - maven
-    - default-jre
-    - default-jdk
-  when: not (st.stat.isdir is defined and st.stat.isdir)
-- name: download YCSB source code
-  get_url: url={{ download_path }}
-           dest={{ destination }}/{{ version }}.tar.gz
-           validate_certs=no
-  when: not (st.stat.isdir is defined and st.stat.isdir)
-- name: unarchive YCSB
-  command: 'tar xzf {{ destination }}/{{ version }}.tar.gz chdir=/tmp/'
-  when: not (st.stat.isdir is defined and st.stat.isdir)
-- name: mvn package
-  command: 'mvn package chdir={{ destination }}/YCSB-{{ version }}'
-  async: 5000
-  poll:  5
-  when: not (st.stat.isdir is defined and st.stat.isdir)
+#- stat: path={{ ycsb_path }}
+#  register: st
+#- name: install Java deps
+#  apt: name={{ item }}
+#  sudo: True
+#  async: 5000
+#  poll:  5
+#  with_items:
+#    - maven
+#    - default-jre
+#    - default-jdk
+#  when: not (st.stat.isdir is defined and st.stat.isdir)
+#- name: download YCSB source code
+#  get_url: url={{ download_path }}
+#           dest={{ destination }}/{{ version }}.tar.gz
+#           validate_certs=no
+#  when: not (st.stat.isdir is defined and st.stat.isdir)
+#- name: unarchive YCSB
+#  command: 'tar xzf {{ destination }}/{{ version }}.tar.gz chdir=/tmp/'
+#  when: not (st.stat.isdir is defined and st.stat.isdir)
+#- name: mvn package
+#  command: 'mvn package chdir={{ destination }}/YCSB-{{ version }}'
+#  async: 5000
+#  poll:  5
+#  when: not (st.stat.isdir is defined and st.stat.isdir)
+#- name: move artifact
+#  command: 'mv {{ destination }}/YCSB-{{ version }}/distribution/target/ycsb-{{ version }}.tar.gz {{ destination }}/'
+#  when: not (st.stat.isdir is defined and st.stat.isdir)
 - name: move artifact
-  command: 'mv {{ destination }}/YCSB-{{ version }}/distribution/target/ycsb-{{ version }}.tar.gz {{ destination }}/'
-  when: not (st.stat.isdir is defined and st.stat.isdir)
+  copy: 'src=ycsb-{{ version }}.tar.gz dest={{ destination }}/'
 - name: unarchive YCSB
   command: 'tar xzf {{ destination }}/ycsb-{{ version }}.tar.gz chdir={{ destination }}'
-  when: not (st.stat.isdir is defined and st.stat.isdir)
+#  when: not (st.stat.isdir is defined and st.stat.isdir)
 ...
