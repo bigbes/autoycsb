@@ -15,13 +15,13 @@ databases:
     - name: 'tarantool-tree'
       opts:
         port: 3310
-        arena: 0.1
+        arena: 0.2
         index: 'tree'
-#     - name: 'tarantool-hash'
-#       opts:
-#         port: 3310
-#         arena: 0.1
-#         index: 'hash'
+    - name: 'tarantool-hash'
+      opts:
+        port: 3310
+        arena: 0.2
+        index: 'hash'
   host:
     host: '192.168.33.10'
     user: 'vagrant'
@@ -32,10 +32,10 @@ workloads:
   params:
     recordcount:            20000
     operationcount:         50000
-    exporter:              'com.yahoo.ycsb.measurements.exporter.JSONArrayMeasurementsExporter'
-    measurementtype:       'timeseries'
+    exporter:               'com.yahoo.ycsb.measurements.exporter.JSONArrayMeasurementsExporter'
+    measurementtype:        'timeseries'
     timeseries.granularity: 2000
-    fieldcount: 1
+    fieldcount:             2
   list:
     'A': {
       workloadfile: 'workloads/workloada',
@@ -88,5 +88,4 @@ workloads:
 ansible:
   timeout:  60
   output:  './output/'
-export: 'sh5.tarantool.org:218cf5509b04899435dd76ad5a5d4282'
 ...
