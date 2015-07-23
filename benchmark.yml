@@ -1,87 +1,91 @@
 ---
 runs:
-#    threads: [8, 16, 32, 64, 128, 256]
-  threads: [32]
+  threads: [32, 64]
+#  threads: [8, 16, 32, 64, 128, 256]
+#  threads: [32]
   retries: 1
 databases:
   list:
-    - name: 'redis'
+    - name: 'memcached'
       opts:
-        port: 6379
-    - name: 'tarantool-tree'
-      opts:
-        port: 3301
-        arena: 0.5
-        index: 'tree'
-    - name: 'tarantool-hash'
-      opts:
-        port: 3301
-        arena: 0.5
-        index: 'hash'
+        port: 11211
+#     - name: 'redis'
+#       opts:
+#         port: 6400
+#     - name: 'tarantool-tree'
+#       opts:
+#         port: 3310
+#         arena: 8
+#         index: 'tree'
+#     - name: 'tarantool-hash'
+#       opts:
+#         port: 3310
+#         arena: 8
+#         index: 'hash'
   host:
-    host: '192.168.33.10'
-    user: 'vagrant'
+    host: 'sh4.tarantool.org'
+    user: '---'
     opts:
-      ansible_ssh_private_key_file: '/home/bigbes/.vagrant.d/insecure_private_key'
-#      ansible_sudo_pass: ''
+      ansible_sudo_pass: '---'
+      ansible_ssh_pass:  '--'
 workloads:
   params:
-    recordcount:            2000
-    operationcount:         5000
+    recordcount:            2000000
+    operationcount:         5000000
     exporter:              'com.yahoo.ycsb.measurements.exporter.JSONArrayMeasurementsExporter'
     measurementtype:       'timeseries'
     timeseries.granularity: 2000
   list:
-    'A': {
-      workloadfile: 'workloads/workloada',
-      description:  'Workload A'
-    }
+#    'A': {
+#      workloadfile: 'workloads/workloada',
+#      description:  'Workload A'
+#    }
     'B': {
       workloadfile: 'workloads/workloadb',
       description: 'Workload B'
     }
-#     'C': {
-#       workloadfile: 'workloads/workloadc',
-#       description: 'Workload C'
-#     }
-#     'D': {
-#       workloadfile: 'workloads/workloada',
-#       description: 'Workload D'
-#     }
-#     'E': {
-#       workloadfile: 'workloads/workloade',
-#       description: 'Workload E',
-#       params: {
-#         operationcount: 200000
-#       }
-#     }
-#     'F': {
-#       workloadfile: 'workloads/workloadf',
-#       description: 'Workload F'
-#     }
-#     'LOAD': {
-#       workloadfile: 'workloads/workloada',
-#       description: 'Insert Only',
-#       params: {
-#         insertproportion: 1,
-#         updateproportion: 0,
-#         readproportion: 0,
-#         scanproportion: 0
-#       }
-#     }
+    'C': {
+      workloadfile: 'workloads/workloadc',
+      description: 'Workload C'
+    }
+    'D': {
+      workloadfile: 'workloads/workloada',
+      description: 'Workload D'
+    }
+    'E': {
+      workloadfile: 'workloads/workloade',
+      description: 'Workload E',
+      params: {
+        operationcount: 200000
+      }
+    }
+    'F': {
+      workloadfile: 'workloads/workloadf',
+      description: 'Workload F'
+    }
+#    'LOAD': {
+#      workloadfile: 'workloads/workloada',
+#      description: 'Insert Only',
+#      params: {
+#        insertproportion: 1,
+#        updateproportion: 0,
+#        readproportion: 0,
+#        scanproportion: 0
+#      }
+#    }
   hosts:
-    - host: '192.168.33.11'
-      user: 'vagrant'
+    - host: 'sh2.tarantool.org'
+      user: '---'
       opts:
-        ansible_ssh_private_key_file: '/home/bigbes/.vagrant.d/insecure_private_key'
-#        ansible_sudo_pass: ''
-    - host: '192.168.33.12'
-      user: 'vagrant'
+        ansible_sudo_pass: '---'
+        ansible_ssh_pass:  '---'
+    - host: 'sh3.tarantool.org'
+      user: '---'
       opts:
-        ansible_ssh_private_key_file: '/home/bigbes/.vagrant.d/insecure_private_key'
-#        ansible_sudo_pass: ''
+        ansible_sudo_pass: '---'
+        ansible_ssh_pass:  '---'
 ansible:
   timeout:  60
   output:  './output/'
-export: 'lol:lol'
+export: 'sh5.tarantool.org:218cf5509b04899435dd76ad5a5d4282'
 ...

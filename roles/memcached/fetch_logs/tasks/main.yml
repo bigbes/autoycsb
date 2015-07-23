@@ -1,0 +1,4 @@
+---
+- fetch: "src='/var/log/memcached/{{ name }}_{{ port }}.log' dest={{ output }}/{{ outlog }}
+          flat=True fail_on_missing=Yes"
+...

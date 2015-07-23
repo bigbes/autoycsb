@@ -9,6 +9,7 @@ from pprint import pprint
 
 import socket
 import redis
+import pylibmc
 
 log = logging.getLogger('main')
 
@@ -51,6 +52,24 @@ def check_tarantool(db):
                 continue
             raise
 
+def check_memcached(db):
+    while True:
+        try:
+            memc  = pylibmc.Client(["%s:%s" % (db.host, db.port)])
+            stats = memc.get_stats()
+            break
+        except socket.error as e:
+            if e.errno == errno.ECONNREFUSED:
+                time.sleep(0.1)
+                continue
+            raise
+        except pylibmc.SomeErrors as e:
+            #pprint(repr(e))
+            if repr(e).find('Connection refused') != -1:
+                time.sleep(0.1)
+                continue
+            raise
+
 class DBClient(object):
     params = {
         'tarantool': {
@@ -63,11 +82,12 @@ class DBClient(object):
             'props': '-p redis.host=%s -p redis.port=%s',
             'tfunc': check_redis
         },
+        'memcached': {
+            'pb': '10_memcached_%s.yml',
+            'props': "-p memcached.hosts='%s:%s'",
+            'tfunc': check_memcached
+        },
 ##### NYI #####
-#        'memcached': {
-#            'pb': '10_memcached.yml',
-#            'props': '-p memcached.host=%s -p memcached.port=%s'
-#        },
 #        'mongodb': {
 #            'pb': '10_mongodb.yml'
 #        }
@@ -103,7 +123,7 @@ class DBClient(object):
         opts = self.opts.copy()
         opts.update(custom)
 
-        pprint(opts)
+        #pprint(opts)
 
         pb = PlayBook(
             playbook = self.props['pb'] % cmd, inventory = binv,

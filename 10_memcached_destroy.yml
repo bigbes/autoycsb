@@ -1,0 +1,8 @@
+---
+- hosts: dbservers
+  gather_facts: no
+  sudo: True
+  roles:
+    - memcached/destroy
+...
+

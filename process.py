@@ -69,14 +69,16 @@ def push(cfg, results):
             v=version, unit=unit, tab=tab
         )))
 
-        resp = requests.get(url)
-        if resp.status_code == 200:
-            log.info('pushed %s to result server' % bench_key)
-        else:
-            log.info(
-                "can't push %s to result server: http %d",
-                resp.status_code
-            )
+    pprint(results)
+
+#        resp = requests.get(url)
+#        if resp.status_code == 200:
+    log.info('pushed %s to result server' % bench_key)
+#        else:
+#            log.info(
+#                "can't push %s to result server: http %d",
+#                resp.status_code
+#            )
 
 def parse_config(cfg_path, name):
     log.debug('cfg: %s parsing', name)
@@ -86,7 +88,10 @@ def parse_config(cfg_path, name):
     return cfg
 
 def import_json(fname):
-    parsed_data = json.loads(open(fname, 'r').read())
+    try:
+        parsed_data = json.loads(open(fname, 'r').read())
+    except IOError:
+        return None
     retval = {}
     runtime = 0
     for k, row in enumerate(parsed_data):
@@ -132,11 +137,16 @@ def process_output_db(cfg, wl, db, output):
             for attempt in xrange(1, retries + 1):
                 fname = '%s-%s.output' % (client, attempt)
                 fname = os.path.join(result_dir, fname)
-                fls.append(import_json(fname))
+                fl = import_json(fname)
+                if fl is not None:
+                    fls.append(fl)
             cl = {
                 'Throughput': [],
                 'AvLatency': defaultdict(list)
             }
+            if not fls:
+                continue
+            pprint(fls)
             for fl in fls:
                 for k, v in fl.iteritems():
                     pos = k.find('AvLatency')
@@ -146,6 +156,7 @@ def process_output_db(cfg, wl, db, output):
                     if k.find('Throughput') != -1:
                         cl['Throughput'].append(v)
                         continue
+            pprint(cl)
             for k, v in cl['AvLatency'].iteritems():
                 cl['AvLatency'][k] = geometric_mean(v)
             cl['AvLatency'] = dict(cl['AvLatency'])

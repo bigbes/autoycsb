@@ -3,6 +3,7 @@
 genhosts*
 output
 .*.swp
+*~
 
 bench_frmw.py
 lib.prev
