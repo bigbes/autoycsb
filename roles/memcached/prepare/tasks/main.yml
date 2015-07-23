@@ -1,6 +1,6 @@
 ---
 - name: install packages
-  apt:  name=memcached
+  apt:  name=memcached state=latest
 - name: create directories
   shell: mkdir -p {{ item }}
   with_items:

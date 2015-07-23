@@ -1,7 +1,7 @@
 ---
 prepare: False
 run: False
-version: '0.3.0-SNAPSHOT'
+version: '0.4.0-SNAPSHOT'
 download_path: 'https://github.com/brianfrankcooper/YCSB/archive/{{ version }}.tar.gz'
 destination: '/tmp'
 ycsb_path: '{{ destination }}/ycsb-{{ version }}'

@@ -1,4 +1,5 @@
 import time
+import errno
 import logging
 
 import ansible

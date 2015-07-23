@@ -12,8 +12,8 @@ import requests
 import functools
 
 from pprint import pprint
-from urllib import urlencode
 from collections import defaultdict
+from terminaltables import UnixTable
 
 from lib.database import DBClient, DBClientException
 from lib.workload import Workload
@@ -27,27 +27,15 @@ console_handler = logging.StreamHandler()
 console_handler.setFormatter(formatter)
 log.addHandler(console_handler)
 
-file_handler = logging.FileHandler('process.log')
+file_handler = logging.FileHandler('terminal.log')
 file_handler.setFormatter(formatter)
 log.addHandler(file_handler)
 
-def get_version(output):
-    version = None
-    files = [x for x in os.listdir(output) if x.find('.log') != -1]
-    if not files:
-        log.info('can\'t find log file')
-        return None
-    for line in open(os.path.join(output, files[0]), 'r'):
-        pos = line.find('version')
-        if pos != -1:
-            version = line[pos + 8:-1]
-    return version
-
 def parse_config(cfg_path, name):
-    log.debug('cfg: %s parsing', name)
+    log.info('cfg: %s parsing', name)
     with open(cfg_path, 'r') as cfgfile:
         cfg = yaml.load(cfgfile)
-    log.debug('cfg: done')
+    log.info('cfg: done')
     return cfg
 
 def import_json(fname):
@@ -61,7 +49,7 @@ def import_json(fname):
         if row[u'measurement'] == u'RunTime(ms)':
             runtime = int((int(row[u'value']) - 1) / 500) + 1
         if row[u'measurement'].find(u'Return') != -1 and \
-                parsed_data[k+1][u'measurement'].find(u'Return') == -1 and \
+                parsed_data[k + 1][u'measurement'].find(u'Return') == -1 and \
                 runtime != 0:
             n = retval['series ' + row[u'metric']] = {}
             for m in xrange(1, runtime + 1):
@@ -85,8 +73,8 @@ def process_output_db(cfg, wl, db, output):
     retries = cfg.get('runs', {}).get('retries', 1)
     clients = None
     log_dir = os.path.join(output, db.name)
-    version = get_version(log_dir)
-    log.info('Parsing output of %s: %s' % (db.name, repr(version)))
+    # version = get_version(log_dir)
+    # log.info('Parsing output of %s: %s' % (db.name, repr(version)))
     result = {}
     for thread in threads:
         cls = []
@@ -133,68 +121,57 @@ def process_output_db(cfg, wl, db, output):
             cl['AvLatency'][k] = geometric_mean([clt['AvLatency'][k] for clt in cls])
         cl['Throughput'] = sum([clt['Throughput'] for clt in cls])
         result[thread] = cl
-    return [db.name, db.dbtype, version, result]
+#    return [db.name, db.dbtype, version, result]
+    return result
 
 def process_output(cfg, wl, dbs):
     output  = cfg.get('ansible', {}).get('output', 'output')
     log_dir = os.path.join(output, wl.internal)
 
-    outlist = []
+    db_list = {}
     for db in dbs:
         result = process_output_db(cfg, wl, db, log_dir)
-        wl_name = wl.internal
-        db_name = db.name
-        db_type = db.dbtype
-        db_version = result[2]
-        res = result[3]
-        for thread, v1 in res.iteritems():
+        thread_list = {}
+        for thread, v1 in result.iteritems():
+            out = {}
+            val = {}
             for k, v in v1['AvLatency'].iteritems():
                 if k == 'CLEANUP':
                     continue
-                val = [db_version, 'ycsb-latency',
-                       '.'.join(['ycsb', wl_name, db_name, str(thread), k.lower()]),
-                       v, 'usec']
-                print val
-                outlist.append(val)
-            val = [db_version, 'ycsb',
-                   '.'.join(['ycsb', wl_name, db_name, str(thread)]),
-                   v1['Throughput'], 'rps']
-            print val
-            outlist.append(val)
-    return outlist
+                val[k.lower()] = v
+            out['latency'] = val
+            out['throughput'] = v1['Throughput']
+            thread_list[thread] = out
+        db_list[db.name] = thread_list
+    return db_list
 
-def push(cfg, results):
-    """
-    Push results into benchmark server
-    """
-    cfg = cfg.get('export', None)
-    if cfg is None:
-        log.info('there is no export section in config.yml')
-        return
-    server, key = cfg.split(':')
+def print_tables(cfg, output_list):
+    threads = cfg.get('runs', {}).get('threads', [])
+    dbs     = cfg.get('databases', {}).get('list', [])
+    dbs     = [db['name'] for db in dbs]
+    for wl, m in output_list.iteritems():
+        log.info('Workload %s', repr(wl))
+        log.info('Latency (In usec, less is better)')
+        lat_list = m[dbs[0]][threads[0]]['latency'].keys()
+        header = ['DB-Threads']
+        header.extend(lat_list)
+        table = [header]
+        for thread in threads:
+            for db in dbs:
+                v = [str(m[db][thread]['latency'][k]) for k in lat_list]
+                v.insert(0, '%s-%d' % (db, thread))
+                table.append(v)
+        log.info('\n' + UnixTable(table).table)
 
-    if not server:
-        log.info('result server is not specified in config.yml')
-    if not key:
-        log.info('auth key is not specified in config.yml')
-    if not server or not key:
-        return
-
-    for version, tab, bench_key, val, unit in results:
-        url = 'http://%s/push?%s' % (server, urlencode(dict(
-            key=key, name=bench_key, param=str(val),
-            v=version, unit=unit, tab=tab
-        )))
-
-
-        resp = requests.get(url)
-        if resp.status_code == 200:
-            log.info('pushed %s to result server' % bench_key)
-        else:
-            log.info(
-                "can't push %s to result server: http %d",
-                resp.status_code
-            )
+        log.info('RPC (More is better)')
+        header = ['DB\\Threads']
+        header.extend([str(thread) for thread in threads])
+        table = [header]
+        for db in dbs:
+            v = [db]
+            v.extend([str(int(m[db][thread]['throughput'])) for thread in threads])
+            table.append(v)
+        log.info('\n' + UnixTable(table).table)
 
 def main():
     cfg = parse_config('benchmark.yml', 'bench config')
@@ -208,14 +185,13 @@ def main():
     wls = [Workload(k, v, cfg, timeout, output)
            for k, v in cfg['workloads']['list'].iteritems()]
 
-    outlist = []
+    outlist = {}
     for wl in wls:
-        outlist.extend(process_output(cfg, wl, dbs))
+        outlist[wl.internal] = process_output(cfg, wl, dbs)
 
-    for k in outlist:
-        print k
-#    push(cfg, outlist)
+    print_tables(cfg, outlist)
 
     return 0
 
-exit(main())
+if __name__ == '__main__':
+    exit(main())

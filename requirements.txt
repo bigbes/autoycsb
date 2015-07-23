@@ -2,3 +2,4 @@ ansible
 redis
 pyyaml
 pylibmc
+terminaltables
