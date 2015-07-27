@@ -113,7 +113,7 @@ class DBClient(object):
             raise DBClientException('can\'t find DB with name %s' % self.name)
 
     def base_playbook(self, cmd, custom = None):
-        binv  = ansible.inventory.Inventory('genhosts')
+        binv  = ansible.inventory.Inventory('hosts')
         stats = ansible.callbacks.AggregateStats()
         pb_cb = ansible.callbacks.PlaybookCallbacks(verbose=ansible.utils.VERBOSITY)
         rn_cb = ansible.callbacks.PlaybookRunnerCallbacks(stats,
@@ -136,12 +136,10 @@ class DBClient(object):
         return ansible_run(pb)
 
     def deploy(self):
-        self.init = True
         return self.base_playbook('deploy')
 
     def start(self):
-        if not self.init:
-            return False
+        self.init = True
         stat = self.base_playbook('start')
         self.props['tfunc'](self)
         return stat
@@ -149,6 +147,7 @@ class DBClient(object):
     def stop(self):
         if not self.init:
             return False
+        self.init = False
         return self.base_playbook('stop')
 
     def cleanup(self):
@@ -163,8 +162,6 @@ class DBClient(object):
         return self.base_playbook('destroy')
 
     def fetch_logs(self, custom):
-        if not self.init:
-            return False
         return self.base_playbook('fetch_logs', custom)
 
     def __del__(self):

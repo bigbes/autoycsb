@@ -1,5 +1,9 @@
 ---
-- name: Start Redis
-  service: "name={{ name }}_{{ port }} state=started"
-  sudo: True
+# - name: Start Redis
+#   service: "name={{ name }}_{{ port }} state=started"
+#   sudo: True
+- name: start Redis
+  command: './redis-server redis.conf'
+  args:
+    chdir: '{{ path }}/{{ name }}'
 ...

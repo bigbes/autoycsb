@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 
 import os
-import os.path
 import time
 import logging
+import os.path
+import argparse
 from cStringIO import StringIO
 
 import yaml
@@ -112,25 +113,49 @@ def run_workload(cfg, wl, dbs):
 
     log.removeHandler(fh)
 
+def parse_args():
+    parser = argparse.ArgumentParser(
+            description = "YCSB Automation framework")
+    parser.add_argument("tests",
+                        metavar = "test",
+                        nargs   = "*",
+                        default = [],
+                        help    = """List of tests to run to""")
+    parser.add_argument("--hosts",
+                        action  = "store_true",
+                        default = False,
+                        help    = """Generate only hosts file""")
+    return parser.parse_args()
+
 def main():
     cfg = parse_config('benchmark.yml', 'bench config')
+    args = parse_args()
+    print args
 
     timeout   = cfg.get('ansible', {}).get('ansible_timeout', 60)
     output    = cfg.get('ansible', {}).get('output', 'output')
 
-    with open('genhosts', 'w') as f1, open('genhostso', 'w') as f2:
+    with open('hosts', 'w') as f1, open('hostso', 'w') as f2:
         f1.write(generate_inventory(cfg))
         f2.write(generate_inventory(cfg, True))
+
+    log.info("hosts and hostso files are generated")
+
+    if args.hosts:
+        return 0
 
     dbs = [DBClient(v, cfg['databases']['host'], timeout)
            for v in cfg['databases']['list']]
 
-    for db in dbs:
-        db.deploy()
+    # for db in dbs:
+    #     db.deploy()
 
     wls = [Workload(k, v, cfg, timeout, output)
-           for k, v in cfg['workloads']['list'].iteritems()]
+           for k, v in cfg['workloads']['list'].iteritems()
+           if not args.tests or k in args.tests]
+    wls = sorted(wls, key=(lambda x: x.internal))
 
+    log.info('Running tests %s', ', '.join([wl.internal for wl in wls]))
     for wl in wls:
         run_workload(cfg, wl, dbs)
 

@@ -54,7 +54,7 @@ class Workload(object):
         opts['skip_copy'] = True
         opts['wl_internal'] += '_LOAD'
 
-        binv  = ansible.inventory.Inventory('genhostso')
+        binv  = ansible.inventory.Inventory('hostso')
         stats = ansible.callbacks.AggregateStats()
         pb_cb = ansible.callbacks.PlaybookCallbacks(verbose=1)
         rn_cb = ansible.callbacks.PlaybookRunnerCallbacks(stats,
@@ -82,7 +82,7 @@ class Workload(object):
         opts['skip_copy'] = False
         opts['attempt']   = attempt
 
-        binv  = ansible.inventory.Inventory('genhosts')
+        binv  = ansible.inventory.Inventory('hosts')
         stats = ansible.callbacks.AggregateStats()
         pb_cb = ansible.callbacks.PlaybookCallbacks(verbose=1)
         rn_cb = ansible.callbacks.PlaybookRunnerCallbacks(stats,

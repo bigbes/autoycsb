@@ -1,6 +1,6 @@
 *.log
 *.pyc
-genhosts*
+hosts*
 output
 .*.swp
 *~

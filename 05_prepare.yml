@@ -1,11 +1,11 @@
 ---
-- hosts: dbservers
-  gather_facts: no
-  sudo: True
-  roles:
-    - tarantool/prepare
-    - redis/prepare
-    - memcached/prepare
+# - hosts: dbservers
+#   gather_facts: no
+#   sudo: True
+#   roles:
+#     - tarantool/prepare
+#     - redis/prepare
+#     - memcached/prepare
 - hosts: ycsbservers
   gather_facts: no
   roles:

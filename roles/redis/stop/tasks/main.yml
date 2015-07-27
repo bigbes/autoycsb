@@ -1,5 +1,9 @@
 ---
-- name: stop redis
-  service: "name={{ name }}_{{ port }} state=stopped"
-  sudo: true
+# - name: stop redis
+#   service: "name={{ name }}_{{ port }} state=stopped"
+#   sudo: true
+- name: stop Redis
+  shell: 'kill `cat {{ db }}.pid`'
+  args:
+    chdir: '{{ path }}/{{ name }}'
 ...

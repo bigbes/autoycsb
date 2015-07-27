@@ -1,4 +1,4 @@
 ---
-- fetch: "src='/var/log/tarantool/{{ name }}-ycsb.log' dest={{ output }}/{{ outlog }}
+- fetch: "src='{{ path }}/{{ db }}.log' dest={{ output }}/{{ outlog }}
           flat=True fail_on_missing=Yes"
 ...

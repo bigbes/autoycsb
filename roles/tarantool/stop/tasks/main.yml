@@ -1,5 +1,9 @@
 ---
-- name: stop tarantool
-  command: tarantoolctl stop {{ name }}-ycsb
-  sudo: true
+# - name: stop tarantool
+#   command: tarantoolctl stop {{ name }}-ycsb
+#   sudo: true
+- name: stop Tarantool
+  shell: 'kill `cat {{ db }}.pid`'
+  args:
+    chdir: '{{ path }}/{{ name }}'
 ...
