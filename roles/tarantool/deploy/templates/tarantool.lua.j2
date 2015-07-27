@@ -8,5 +8,5 @@ box.cfg {
 }
 
 local spc = box.schema.space.create("ycsb", { id = 1024 })
-spc:create_index('primary', { type = {{ index }}, parts = {1, 'STR'} } )
+spc:create_index('primary', { type = '{{ index }}', parts = {1, 'STR'} } )
 box.schema.user.grant('guest', 'read,write,execute', 'universe')

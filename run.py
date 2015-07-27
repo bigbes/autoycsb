@@ -77,6 +77,7 @@ def run_wl_db(cfg, wl, db, output):
     log_dir = os.path.join(output, db.name)
 
     db.start()
+    wl.prepare(db, 64, os.path.join(log_dir, 'PREP'))
 
     for thread in threads:
         result_dir = os.path.join(log_dir, str(thread))

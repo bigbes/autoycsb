@@ -1,21 +1,22 @@
 ---
 - stat: path={{ ycsb_path }}
   register: st
-# - name: install Java deps
-#   apt: name={{ item }}
-#   sudo: True
-#   async: 5000
-#   poll:  5
-#   with_items:
-#     - maven
-#     - default-jre
-#     - default-jdk
-#   when: not (st.stat.isdir is defined and st.stat.isdir)
-# - name: download YCSB source code
-#   get_url: url={{ download_path }}
-#            dest={{ destination }}/{{ version }}.tar.gz
-#            validate_certs=no
-#   when: not (st.stat.isdir is defined and st.stat.isdir)
+- name: add oracle java repo
+  apt_repository: repo='ppa:webupd8team/java' update_cache=Yes state=present
+  when: not (st.stat.isdir is defined and st.stat.isdir)
+- name: install Java deps
+  apt: name={{ item }} state=latest
+  sudo: True
+  with_items:
+    - oracle-java7-set-default
+    - maven
+  when: not (st.stat.isdir is defined and st.stat.isdir)
+- name: download YCSB source code
+  get_url: url={{ download_path }}
+           dest={{ destination }}/{{ version }}.tar.gz
+  args:
+    validate_certs: False
+  when: not (st.stat.isdir is defined and st.stat.isdir)
 - name: unarchive YCSB
   command: 'tar xzf {{ destination }}/{{ version }}.tar.gz chdir=/tmp/'
   when: not (st.stat.isdir is defined and st.stat.isdir)

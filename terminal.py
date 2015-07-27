@@ -13,7 +13,7 @@ import functools
 
 from pprint import pprint
 from collections import defaultdict
-from terminaltables import UnixTable
+from terminaltables import AsciiTable
 
 from lib.database import DBClient, DBClientException
 from lib.workload import Workload
@@ -153,7 +153,7 @@ def print_tables(cfg, output_list):
         log.info('Workload %s', repr(wl))
         log.info('Latency (In usec, less is better)')
         lat_list = m[dbs[0]][threads[0]]['latency'].keys()
-        header = ['DB-Threads']
+        header = ['DB-Clients\\OP']
         header.extend(lat_list)
         table = [header]
         for thread in threads:
@@ -161,9 +161,9 @@ def print_tables(cfg, output_list):
                 v = [str(m[db][thread]['latency'][k]) for k in lat_list]
                 v.insert(0, '%s-%d' % (db, thread))
                 table.append(v)
-        log.info('\n' + UnixTable(table).table)
+        log.info('\n' + AsciiTable(table).table)
 
-        log.info('RPC (More is better)')
+        log.info('RPS (More is better)')
         header = ['DB\\Threads']
         header.extend([str(thread) for thread in threads])
         table = [header]
@@ -171,7 +171,7 @@ def print_tables(cfg, output_list):
             v = [db]
             v.extend([str(int(m[db][thread]['throughput'])) for thread in threads])
             table.append(v)
-        log.info('\n' + UnixTable(table).table)
+        log.info('\n' + AsciiTable(table).table)
 
 def main():
     cfg = parse_config('benchmark.yml', 'bench config')
