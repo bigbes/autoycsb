@@ -3,6 +3,7 @@
   register: st
 - name: add oracle java repo
   apt_repository: repo='ppa:webupd8team/java' update_cache=Yes state=present
+  sudo: True
   when: not (st.stat.isdir is defined and st.stat.isdir)
 - name: install Java deps
   apt: name={{ item }} state=latest
