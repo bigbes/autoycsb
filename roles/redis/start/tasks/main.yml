@@ -3,7 +3,7 @@
 #   service: "name={{ name }}_{{ port }} state=started"
 #   sudo: True
 - name: start Redis
-  command: './redis-server redis.conf'
+  command: './{{ binary }} {{ config }}'
   args:
-    chdir: '{{ path }}/{{ name }}'
+    chdir: '{{ path }}'
 ...

@@ -2,8 +2,12 @@
 # - name: start tarantool
 #   command: tarantoolctl start {{ name }}-ycsb
 #   sudo: true
-- name: start Tarantool
-  command: './tarantool tarantool.lua'
+# - name: start Tarantool
+#   command: './tarantool tarantool.lua'
+#   args:
+#     chdir: '{{ path }}/{{ name }}'
+- name: start tarantool
+  shell: './{{ binary }} {{ tarantoolctl }} {{ config }}'
   args:
-    chdir: '{{ path }}/{{ name }}'
+    chdir: '{{ path }}'
 ...

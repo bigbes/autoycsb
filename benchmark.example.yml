@@ -1,0 +1,113 @@
+---
+runs:
+  threads: [16]
+  retries: 3
+databases:
+  opts:
+    path: '/home/bigbes/bin/'    
+  list:
+#     - name: 'redis-28'
+#       binary: 'redis-28'
+#       config: 'redis.conf'
+#       opts:
+#         port: 6400
+#     - name: 'redis-30'
+#       binary: 'redis-30'
+#       config: 'redis.conf'
+#       opts:
+#         port: 6400
+#     - name: 'tarantool-tree-165'
+#       binary: 'tarantool-165'
+#       config: 'tarantool-tree.lua'
+#       opts:
+#         port: 3310
+#         arena: 0.2
+#         index: 'tree'
+#     - name: 'tarantool-hash-165'
+#       binary: 'tarantool-165'
+#       config: 'tarantool-hash.lua'
+#       opts:
+#         port: 3310
+#         arena: 0.2
+#         index: 'hash'
+#    - name: 'tarantool-tree-166'
+#       binary: 'tarantool-166'
+#       config: 'tarantool-tree.lua'
+#      opts:
+#        port: 3310
+#        arena: 0.2
+#        index: 'tree'
+    - name: 'tarantool-hash-166'
+      binary: 'tarantool-166'
+      config: 'tarantool-hash.lua'
+      opts:
+        port: 3310
+        arena: 0.2
+        index: 'hash'
+  host:
+    host: '---'
+    user: '---'
+#     opts:
+#       ansible_sudo_pass: '---'
+#       ansible_ssh_private_key_file: '---'
+workloads:
+  params:
+    recordcount:            3000000
+    operationcount:         5000000
+    exporter:               'com.yahoo.ycsb.measurements.exporter.JSONArrayMeasurementsExporter'
+    measurementtype:        'timeseries'
+    timeseries.granularity: 2000
+    fieldcount:             2
+  list:
+#     'A': {
+#       workloadfile: 'workloads/workloada',
+#       description:  'Workload A'
+#     }
+#     'B': {
+#       workloadfile: 'workloads/workloadb',
+#       description: 'Workload B'
+#     }
+    'C': {
+      workloadfile: 'workloads/workloadc',
+      description: 'Workload C'
+    }
+#     'D': {
+#       workloadfile: 'workloads/workloada',
+#       description: 'Workload D'
+#     }
+#     'E': {
+#       workloadfile: 'workloads/workloade',
+#       description: 'Workload E',
+#       params: {
+#         operationcount: 200000
+#       }
+#     }
+#     'F': {
+#       workloadfile: 'workloads/workloadf',
+#       description: 'Workload F'
+#     }
+#    'LOAD': {
+#      workloadfile: 'workloads/workloada',
+#      description: 'Insert Only',
+#      params: {
+#        insertproportion: 1,
+#        updateproportion: 0,
+#        readproportion: 0,
+#        scanproportion: 0
+#      }
+#    }
+  hosts:
+    - host: '---'
+      user: '---'
+#       opts:
+#         ansible_sudo_pass: '---'
+#         ansible_ssh_private_key_file: '/home/---/.ssh/id_rsa'
+    - host: '---'
+      user: '---'
+#       opts:
+#         ansible_sudo_pass: '---'
+#         ansible_ssh_private_key_file: '/home/---/.ssh/id_rsa'
+ansible:
+  timeout:  60
+  output:  './output/'
+...
