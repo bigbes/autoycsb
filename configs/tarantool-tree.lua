@@ -1,13 +1,9 @@
 box.cfg {
-   custom_proc_title = 'tarantool-tree-ycsb',
    listen            = '3310',
-   slab_alloc_arena  = 8,
+   slab_alloc_arena  = 0.2,
    log_level         = 5,
    logger_nonblock   = true,
    wal_mode          = "none",
-   pid_file          = 'tarantool.pid',
-   logger            = 'tarantool.log',
-   background        = true
 }
 
 local spc = box.schema.space.create("ycsb", { id = 1024 })
