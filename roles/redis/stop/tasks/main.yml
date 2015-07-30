@@ -3,7 +3,8 @@
 #   service: "name={{ name }}_{{ port }} state=stopped"
 #   sudo: true
 - name: stop Redis
-  shell: 'kill `cat {{ db }}.pid`'
-  args:
-    chdir: '{{ path }}/{{ name }}'
+  shell: 'kill `cat redis.pid` chdir={{ path }}/var/redis'
+  register: debug_out
+  ignore_errors: True
+- debug: var=debug_out
 ...

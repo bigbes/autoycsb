@@ -149,6 +149,9 @@ def main():
 
     # for db in dbs:
     #     db.deploy()
+    # for db in dbs:
+    #     db.start()
+    #     db.stop()
 
     wls = [Workload(k, v, cfg, timeout, output)
            for k, v in cfg['workloads']['list'].iteritems()

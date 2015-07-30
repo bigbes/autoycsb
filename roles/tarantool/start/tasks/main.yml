@@ -7,7 +7,7 @@
 #   args:
 #     chdir: '{{ path }}/{{ name }}'
 - name: start tarantool
-  shell: './{{ binary }} {{ tarantoolctl }} {{ config }}'
-  args:
-    chdir: '{{ path }}'
+  shell: './{{ binary }} {{ tarantoolctl }} start {{ config }} chdir={{ path }} &'
+  environment:
+    PWD: '{{ path }}'
 ...

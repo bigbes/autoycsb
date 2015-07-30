@@ -2,8 +2,8 @@
 name:   'redis'
 db:     'redis'
 port:   6379
-custom: 'logging'
-path:   '/tmp'
 output: '/tmp'
-outlog: '{{ inventory_hostname }}-{{ name }}-{{ custom }}.log'
+outlog: '{{ inventory_hostname }}-{{ name }}.log'
+path:         '/home/vagrant/bin/'
+tarantoolctl: '/usr/bin/tarantoolctl'
 ...

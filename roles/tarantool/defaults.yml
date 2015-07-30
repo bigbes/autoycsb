@@ -5,6 +5,7 @@ port:   3301
 arena:  0.2
 index:  'tree'
 output: '/tmp'
-path:   '/tmp'
 outlog: '{{ inventory_hostname }}-{{ name }}.log'
+path:         '/home/vagrant/bin/'
+tarantoolctl: '/usr/bin/tarantoolctl'
 ...

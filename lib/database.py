@@ -38,7 +38,7 @@ def check_redis(db):
                 return True
         except redis.ConnectionError:
             pass
-        sleep(0.1)
+        time.sleep(0.1)
     return False
 
 def check_tarantool(db):
